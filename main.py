@@ -6,7 +6,7 @@ app = FastAPI()
 
 MONGO_URI = os.environ.get("MONGO_URI")
 client = MongoClient(MONGO_URI)
-db = client["your_database_name"]
+db = client["analytics"]
 collection = db["analytics"]
 
 @app.post("/")
