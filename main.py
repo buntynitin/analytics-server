@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Query
 from pymongo import MongoClient
 import os
 
@@ -19,11 +19,19 @@ async def analytics(request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/location")
-async def add_location(request: Request):
-    try:
-        body = await request.json()        
-        locationsCollection.insert_one(body)
+@app.get("/location")
+async def add_location(
+    latitude: float = Query(None,),
+    longitude: float = Query(None),
+    time: int = Query(None)
+    ):
+    try: 
+        location_data = {
+            "latitude": latitude,
+            "longitude": longitude,
+            "time": time
+        }
+        locationsCollection.insert_one(location_data)
         return {"data": True}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
