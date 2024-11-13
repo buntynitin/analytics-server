@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request, Query
+from fastapi.responses import JSONResponse
 from pymongo import MongoClient
 import os
 
@@ -10,12 +11,16 @@ db = client["analytics"]
 collection = db["analytics"]
 locationsCollection = db["locations"]
 
+@app.get("/ping")
+async def ping():
+    return JSONResponse(content={"message": "Pong"})
+
 @app.post("/")
 async def analytics(request: Request):
     try:
         body = await request.json()        
         collection.insert_one(body)
-        return {"data": True}
+        return JSONResponse(content={"data": True})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -32,6 +37,6 @@ async def add_location(
             "time": time
         }
         locationsCollection.insert_one(location_data)
-        return {"data": True}
+        return JSONResponse(content={"data": True})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
