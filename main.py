@@ -10,6 +10,7 @@ client = MongoClient(MONGO_URI)
 db = client["analytics"]
 collection = db["analytics"]
 locationsCollection = db["locations"]
+notificationCollection = db["notifications"]
 
 @app.get("/ping")
 async def ping():
@@ -20,6 +21,15 @@ async def analytics(request: Request):
     try:
         body = await request.json()        
         collection.insert_one(body)
+        return JSONResponse(content={"data": True})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@app.post("/notification")
+async def notifications(request: Request):
+    try:
+        body = await request.json()        
+        notificationCollection.insert_one(body)
         return JSONResponse(content={"data": True})
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
